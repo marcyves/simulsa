@@ -1,11 +1,24 @@
 
 from datetime import date, time, datetime
+import enum
 from random import Random, random
 
 def title(message):
     print("-"*40)
     print("\t", message)
     print("-"*40)
+
+def menu(items, message):
+    print("")
+    for i, item in enumerate(items, start=1):
+        print("\t{} - {}".format(i, item))
+    print("")
+    
+    answer = 0
+    while answer < 1 or answer > i:
+        answer = int(input("{} ==> ".format(message)))
+
+    return answer
 
 class Simul:
 
@@ -14,6 +27,10 @@ class Simul:
         print("Créer des programmes, asssurer leur duplication et leur conditionnement, organiser leurs points de vente et leur distribution, et les soutenir avec une campagne publicitaire, voilà les tâches élémentaires d'une société de logiciels.")
         print("Vous êtes son P.D.G : sachez doser chaque action, évaluer chaque investissement, prendre des risques quand il le faut...")
         print("Méfiance, la faillite vous guette !")
+
+        self.GameOptions = ["Fabrication", "Production", "Publicité", "Ventes", "Fin de la journée", "Fin du jeu"]
+        self.SoftwareCategories = ["Education", "Gestion", "Professionnel", "Personnel", "Utilitaire", "Artistique", "Jeux"]
+
         # Ligne 1700
         # JM
         self.jours_mois =[31,28,31,30,31,30,31,31,30,31,30,31]
@@ -62,6 +79,7 @@ class Simul:
         self.SD = 5000              # Caisse du joueur
         self.FA = 0                 # Nombre d'articles créés
         self.NA = 0                 # Nombre d'actions par jour
+        self.AR = []
         self.TVV = self.SD
 
     def next_day(self, JA):
@@ -94,21 +112,6 @@ class Simul:
 
         print("Une nouvelle journée commence...")
 
-    def menu(self):
-        # 1540
-        print("1 - Fabrication")
-        print("2 - Production")
-        print("3 - Publicité")
-        print("4 - Ventes")
-        print("5 - Fin de la journée")
-        print("6 - Fin du jeu")
-
-        rep = 0
-        while rep < 1 or rep > 6:
-            rep = int(input("Votre choix ==> "))
-        
-        return rep
-
     def balance(self):
         # 2160
         title("Vos comptes au {}".format(datetime.strftime(self.today, '%A %d %B %Y')))
@@ -129,16 +132,9 @@ class Simul:
             Q = 0
             while Q < 1 or Q > 5:
                 Q = int(input("Qualité de ce produit (1 à 5) ==> "))
-            print("1 - Education")
-            print("2 - Gestion")
-            print("3 - Professionnel")
-            print("4 - Personnel")
-            print("5 - Utilitaire")
-            print("6 - Artistique")
-            print("7 - Jeux")
-            ST = 0
-            while ST < 1 or ST > 7:
-                ST = int(input("Dans quelle catégorie le classer ==> "))
+
+            ST = menu(self.SoftwareCategories, "Dans quelle catégorie le classer")
+
             F = ""
             while F != "D" and F != "C":
                 F = input("Sera-t'il sur disquette ou cassette (D/C) ==> ")
@@ -181,15 +177,25 @@ game.announce()     # 1900
 NA = 1
 
 choice = 0
-while choice < 5:
-    choice = game.menu()         # 1540
-    if choice == 1:
-        game.fabrication()
-    elif choice == 2:
-        game.production()
-    elif choice == 3: 
-        game.publicité()
-    elif choice == 4:
-        game.ventes()
+while True:
+    while choice < 5:
+        choice = menu(game.GameOptions, "Votre choix")         # 1540
+        if choice == 1:
+            game.fabrication()
+        elif choice == 2:
+            game.production()
+        elif choice == 3: 
+            game.publicité()
+        elif choice == 4:
+            game.ventes()
 
-game.balance()      # 2160
+    game.balance()      # 2160
+
+    if choice == 6:
+        break
+    else:
+        choice = 0
+        game.next_day(1)
+
+
+print("Bye...")
