@@ -13,7 +13,7 @@ Dernier commentaire, pour l'instant c'est du Python, mais un jour peut-être une
 Roadmap
 -------
 
-1. Transcrire le Basic Apple en Python
+1. Transcrire le Basic Apple en Python (en cours)
 2. Moderniser les textes
 3. Implémenter de nouveaux modules pour améliorer la simulation
 4. Faire une version multi joueurs
