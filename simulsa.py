@@ -59,8 +59,9 @@ class Simul:
 
         self.today = date.today()
 
-        self.SD = 5000
-
+        self.SD = 5000              # Caisse du joueur
+        self.FA = 0                 # Nombre d'articles créés
+        self.NA = 0                 # Nombre d'actions par jour
         self.TVV = self.SD
 
     def next_day(self, JA):
@@ -70,7 +71,7 @@ class Simul:
     def announce(self):
         # Ligne 1900 Faits du jour
                 
-        title("Nous sommes le {}".format(self.today))
+        title("Nous sommes {}".format(datetime.strftime(self.today, '%A %d %B %Y')))
 
         SoftwareType = int(random() * 7)
         SoftwareQuality = int(random() * 5)
@@ -103,7 +104,6 @@ class Simul:
         print("6 - Fin du jeu")
 
         rep = 0
-
         while rep < 1 or rep > 6:
             rep = int(input("Votre choix ==> "))
         
@@ -111,19 +111,53 @@ class Simul:
 
     def balance(self):
         # 2160
-        title("Vos comptes au {}".format(self.today))
+        title("Vos comptes au {}".format(datetime.strftime(self.today, '%A %d %B %Y')))
         pass      
 
     def fabrication(self):
         # 20
         title("Fabrication")
-        pass
+        if self.FA > 49:
+            print("Vous avez suffisamment d'articles")
+        else:
+            NM = ""
+            while NM == "" or len(NM) > 10:
+                NM = input("Nom de ce nouveau logiciel (maximum 10 caractères) ==> ")
+            AUT = ""
+            while AUT != "" and AUT.length()< 10:
+                AUT = input("Nom de son auteur (maximum 10 caractères) ==> ")
+            Q = 0
+            while Q < 1 or Q > 5:
+                Q = int(input("Qualité de ce produit (1 à 5) ==> "))
+            print("1 - Education")
+            print("2 - Gestion")
+            print("3 - Professionnel")
+            print("4 - Personnel")
+            print("5 - Utilitaire")
+            print("6 - Artistique")
+            print("7 - Jeux")
+            ST = 0
+            while ST < 1 or ST > 7:
+                ST = int(input("Dans quelle catégorie le classer ==> "))
+            F = ""
+            while F != "D" and F != "C":
+                F = input("Sera-t'il sur disquette ou cassette (D/C) ==> ")
+            FR = 2 if F == "D" else 1
+
+            FB = (Q * 10) + (ST * 2) + (FR * 20) + int(random() * 10)
+
+            print("Vous devrez payer {} € pour ajouter {} à votre catalogue".format(FB, NM))
+
+            PC = input("Combien le vendrez-vous ? ==> ")
+
+            self.SD = self.SD - FB
+            self.FA += 1
+            self.AR[self.FA] = [ NM, AUT, Q, ST, FR, PC ]
+            self.NA += 1
 
     def production(self):
         # 390
         title("Production")
-        while NM != "" and NM.length()< 10:
-            NM = input("Nom de ce nouveau logiciel (maximum 10 caractères) ==>")
 
         pass
 
