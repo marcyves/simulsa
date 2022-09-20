@@ -23,6 +23,15 @@ class Simul:
             answer = int(input("{} ==> ".format(message)))
 
         return answer
+    
+    @staticmethod
+    def get_name(message, max=10):
+        name = ""
+        while name == "" or len(name) > max:
+            name = input("{} (maximum {} caractères) ==> ".format(message, max))
+        
+        return name
+
 
     def __init__(self):
         self.title("SIMUL SA")
@@ -126,12 +135,8 @@ class Simul:
         if self.FA > 49:
             print("Vous avez suffisamment d'articles")
         else:
-            NM = ""
-            while NM == "" or len(NM) > 10:
-                NM = input("Nom de ce nouveau logiciel (maximum 10 caractères) ==> ")
-            AUT = ""
-            while AUT != "" or len(AUT) > 10:
-                AUT = input("Nom de son auteur (maximum 10 caractères) ==> ")
+            NM  = self.get_name("Nom de ce nouveau logiciel")
+            AUT = self.get_name("Nom de son auteur")
             Q = 0
             while Q < 1 or Q > 5:
                 Q = int(input("Qualité de ce produit (1 à 5) ==> "))
