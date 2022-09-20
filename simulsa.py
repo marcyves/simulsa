@@ -1,29 +1,31 @@
 
 from datetime import date, time, datetime
-import enum
 from random import Random, random
 
-def title(message):
-    print("-"*40)
-    print("\t", message)
-    print("-"*40)
-
-def menu(items, message):
-    print("")
-    for i, item in enumerate(items, start=1):
-        print("\t{} - {}".format(i, item))
-    print("")
-    
-    answer = 0
-    while answer < 1 or answer > i:
-        answer = int(input("{} ==> ".format(message)))
-
-    return answer
 
 class Simul:
 
+    @staticmethod
+    def title(message):
+        print("-"*40)
+        print("\t", message)
+        print("-"*40)
+
+    @staticmethod
+    def menu(items, message):
+        print("")
+        for i, item in enumerate(items, start=1):
+            print("\t{} - {}".format(i, item))
+        print("")
+        
+        answer = 0
+        while answer < 1 or answer > i:
+            answer = int(input("{} ==> ".format(message)))
+
+        return answer
+
     def __init__(self):
-        title("SIMUL SA")
+        self.title("SIMUL SA")
         print("Créer des programmes, asssurer leur duplication et leur conditionnement, organiser leurs points de vente et leur distribution, et les soutenir avec une campagne publicitaire, voilà les tâches élémentaires d'une société de logiciels.")
         print("Vous êtes son P.D.G : sachez doser chaque action, évaluer chaque investissement, prendre des risques quand il le faut...")
         print("Méfiance, la faillite vous guette !")
@@ -79,8 +81,9 @@ class Simul:
         self.SD = 5000              # Caisse du joueur
         self.FA = 0                 # Nombre d'articles créés
         self.NA = 0                 # Nombre d'actions par jour
-        self.AR = []
+        self.AR = {}
         self.TVV = self.SD
+
 
     def next_day(self, JA):
         # Ligne 910 Date
@@ -89,7 +92,7 @@ class Simul:
     def announce(self):
         # Ligne 1900 Faits du jour
                 
-        title("Nous sommes {}".format(datetime.strftime(self.today, '%A %d %B %Y')))
+        self.title("Nous sommes {}".format(datetime.strftime(self.today, '%A %d %B %Y')))
 
         SoftwareType = int(random() * 7)
         SoftwareQuality = int(random() * 5)
@@ -114,12 +117,12 @@ class Simul:
 
     def balance(self):
         # 2160
-        title("Vos comptes au {}".format(datetime.strftime(self.today, '%A %d %B %Y')))
+        self.title("Vos comptes au {}".format(datetime.strftime(self.today, '%A %d %B %Y')))
         pass      
 
     def fabrication(self):
         # 20
-        title("Fabrication")
+        self.title("Fabrication")
         if self.FA > 49:
             print("Vous avez suffisamment d'articles")
         else:
@@ -127,13 +130,13 @@ class Simul:
             while NM == "" or len(NM) > 10:
                 NM = input("Nom de ce nouveau logiciel (maximum 10 caractères) ==> ")
             AUT = ""
-            while AUT != "" and AUT.length()< 10:
+            while AUT != "" or len(AUT) > 10:
                 AUT = input("Nom de son auteur (maximum 10 caractères) ==> ")
             Q = 0
             while Q < 1 or Q > 5:
                 Q = int(input("Qualité de ce produit (1 à 5) ==> "))
 
-            ST = menu(self.SoftwareCategories, "Dans quelle catégorie le classer")
+            ST = self.menu(self.SoftwareCategories, "Dans quelle catégorie le classer")
 
             F = ""
             while F != "D" and F != "C":
@@ -153,18 +156,19 @@ class Simul:
 
     def production(self):
         # 390
-        title("Production")
+        self.title("Production")
+
 
         pass
 
     def publicité(self):
         # 390 ??
-        title("Publicité")
+        self.title("Publicité")
         pass
 
     def ventes(self):
         # 960
-        title("Ventes")
+        self.title("Ventes")
         pass
 
 
@@ -179,7 +183,7 @@ NA = 1
 choice = 0
 while True:
     while choice < 5:
-        choice = menu(game.GameOptions, "Votre choix")         # 1540
+        choice = game.menu(game.GameOptions, "Votre choix")         # 1540
         if choice == 1:
             game.fabrication()
         elif choice == 2:
