@@ -6,10 +6,15 @@ from random import Random, random
 class Simul:
 
     @staticmethod
+    def line(length=50):
+        print("-"*length)
+
+    @staticmethod
     def title(message):
-        print("-"*40)
+        print("\n")
+        Simul.line()
         print("\t", message)
-        print("-"*40)
+        Simul.line()
 
     @staticmethod
     def menu(items, message):
@@ -20,7 +25,10 @@ class Simul:
         
         answer = 0
         while answer < 1 or answer > i:
-            answer = int(input("{} ==> ".format(message)))
+            try:
+                answer = int(input("{} ==> ".format(message)))
+            except ValueError:
+                answer = 0
 
         return answer
     
@@ -135,7 +143,7 @@ class Simul:
         if self.FA > 49:
             print("Vous avez suffisamment d'articles")
         else:
-            NM  = self.get_name("Nom de ce nouveau logiciel")
+            SoftwareName  = self.get_name("Nom de ce nouveau logiciel")
             AUT = self.get_name("Nom de son auteur")
             Q = 0
             while Q < 1 or Q > 5:
@@ -150,21 +158,39 @@ class Simul:
 
             FB = (Q * 10) + (ST * 2) + (FR * 20) + int(random() * 10)
 
-            print("Vous devrez payer {} € pour ajouter {} à votre catalogue".format(FB, NM))
+            print("Vous devrez payer {} € pour ajouter {} à votre catalogue".format(FB, SoftwareName))
 
-            PC = input("Combien le vendrez-vous ? ==> ")
+            PC = int(input("Combien le vendrez-vous ? ==> "))
 
             self.SD = self.SD - FB
             self.FA += 1
-            self.AR[self.FA] = [ NM, AUT, Q, ST, FR, PC ]
+#            self.AR[self.FA] = [ NM, AUT, Q, ST, FR, PC ]
+            self.AR[SoftwareName] = {
+                                      "Auteur":AUT,
+                                      "Qualité":Q,
+                                      "Catégorie":ST,
+                                      "Support":FR,
+                                      "Prix":PC,
+                                      "Stock":0,
+                                      "Ventes":0
+                                    }
             self.NA += 1
 
     def production(self):
         # 390
         self.title("Production")
+        index = self.menu(self.AR.keys(), "Quel logiciel à produire ?") - 1
+        key_list = list(self.AR)
+        SoftwareName = key_list[index]
+        SoftwareDetails = self.AR[SoftwareName]
 
+        self.line()
+        print("Vous avez choisi le logiciel : '{}'".format(SoftwareName))
 
-        pass
+        for item, detail in SoftwareDetails.items():
+            if item == "Catégorie":
+                detail = self.SoftwareCategories[detail - 1]
+            print("{:.12}\t: {}".format(item + " . . . . ", detail))
 
     def publicité(self):
         # 390 ??
