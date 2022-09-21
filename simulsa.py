@@ -1,6 +1,7 @@
 
 from datetime import date, time, datetime
 from random import Random, random
+from statistics import quantiles
 
 
 class Simul:
@@ -31,7 +32,17 @@ class Simul:
                 answer = 0
 
         return answer
-    
+
+    @staticmethod
+    def get_int(message):
+        while True:
+            try:
+                answer = int(input("{} ==> ".format(message)))
+                break
+            except:
+                pass
+        return answer
+
     @staticmethod
     def get_name(message, max=10):
         name = ""
@@ -147,7 +158,7 @@ class Simul:
             AUT = self.get_name("Nom de son auteur")
             Q = 0
             while Q < 1 or Q > 5:
-                Q = int(input("Qualité de ce produit (1 à 5) ==> "))
+                Q = self.get_int("Qualité de ce produit (1 à 5)")
 
             ST = self.menu(self.SoftwareCategories, "Dans quelle catégorie le classer")
 
@@ -160,7 +171,7 @@ class Simul:
 
             print("Vous devrez payer {} € pour ajouter {} à votre catalogue".format(FB, SoftwareName))
 
-            PC = int(input("Combien le vendrez-vous ? ==> "))
+            PC = self.get_int("Combien le vendrez-vous ?")
 
             self.SD = self.SD - FB
             self.FA += 1
@@ -176,10 +187,9 @@ class Simul:
                                     }
             self.NA += 1
 
-    def production(self):
+    def préparation(self):
         # 390
-        self.title("Production")
-        index = self.menu(self.AR.keys(), "Quel logiciel à produire ?") - 1
+        index = self.menu(self.AR.keys(), "Quel logiciel à traiter ?") - 1
         key_list = list(self.AR)
         SoftwareName = key_list[index]
         SoftwareDetails = self.AR[SoftwareName]
@@ -191,6 +201,27 @@ class Simul:
             if item == "Catégorie":
                 detail = self.SoftwareCategories[detail - 1]
             print("{:.12}\t: {}".format(item + " . . . . ", detail))
+    
+        return SoftwareName
+
+    def production(self, SoftwareName):
+        # 390
+        self.title("Production")
+
+        QP = self.get_int("Combien voulez-vous produire d'articles ?")
+        Qualité = self.AR[SoftwareName]["Qualité"]
+        Support = self.AR[SoftwareName]["Support"]
+        PP = (QP * Qualité + (Support * 3.5)) + int(random() * QP)
+        print("Cela vous coutera {} €.".format(PP))
+        if PP > self.SD:
+            print("Est-ce bien raisonnable ?")
+        REP = ""
+        while(REP != "O" and REP != "N"):
+            REP = input("Lancez-vous cette production (O/N) ==> ")
+        if REP == "O":
+            self.AR[SoftwareName]["Stock"] += QP
+            self.SD = self.SD - PP
+            self.NA += 1
 
     def publicité(self):
         # 390 ??
@@ -217,12 +248,14 @@ while True:
         choice = game.menu(game.GameOptions, "Votre choix")         # 1540
         if choice == 1:
             game.fabrication()
-        elif choice == 2:
-            game.production()
-        elif choice == 3: 
-            game.publicité()
-        elif choice == 4:
-            game.ventes()
+        else:
+            SoftwareName = game.préparation()            
+            if choice == 2:
+                game.production(SoftwareName)
+            elif choice == 3: 
+                game.publicité(SoftwareName)
+            elif choice == 4:
+                game.ventes(SoftwareName)
 
     game.balance()      # 2160
 
