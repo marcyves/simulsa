@@ -1,8 +1,6 @@
 
-from datetime import date, time, datetime
-from random import Random, random
-from statistics import quantiles
-
+from datetime import date, datetime
+from random import random
 
 class Simul:
 
@@ -41,6 +39,7 @@ class Simul:
                 break
             except:
                 pass
+
         return answer
 
     @staticmethod
@@ -50,7 +49,6 @@ class Simul:
             name = input("{} (maximum {} caractères) ==> ".format(message, max))
         
         return name
-
 
     def __init__(self):
         self.title("SIMUL SA")
