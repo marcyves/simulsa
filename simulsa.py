@@ -32,6 +32,13 @@ class Simul:
         return answer
 
     @staticmethod
+    def input_choice(message, choix1, choix2):
+        answer = ""
+        while(answer != choix1 and answer != choix2):
+            answer = input("{} ({}/{}) ==> ".format(message, choix1, choix2))
+        return answer
+
+    @staticmethod
     def get_int(message):
         while True:
             try:
@@ -160,9 +167,7 @@ class Simul:
 
             ST = self.menu(self.SoftwareCategories, "Dans quelle catégorie le classer")
 
-            F = ""
-            while F != "D" and F != "C":
-                F = input("Sera-t'il sur disquette ou cassette (D/C) ==> ")
+            F = self.input_choice("Sera-t'il sur disquette ou cassette", "D", "C")
             FR = 2 if F == "D" else 1
 
             FB = (Q * 10) + (ST * 2) + (FR * 20) + int(random() * 10)
@@ -181,24 +186,29 @@ class Simul:
                                       "Support":FR,
                                       "Prix":PC,
                                       "Stock":0,
-                                      "Ventes":0
+                                      "Ventes":0,
+                                      "Publicité":0
                                     }
             self.NA += 1
 
     def préparation(self):
         # 390
-        index = self.menu(self.AR.keys(), "Quel logiciel à traiter ?") - 1
-        key_list = list(self.AR)
-        SoftwareName = key_list[index]
-        SoftwareDetails = self.AR[SoftwareName]
+        if any(self.AR.values()):
+            index = self.menu(self.AR.keys(), "Quel logiciel à traiter ?") - 1
+            key_list = list(self.AR)
+            SoftwareName = key_list[index]
+            SoftwareDetails = self.AR[SoftwareName]
 
-        self.line()
-        print("Vous avez choisi le logiciel : '{}'".format(SoftwareName))
+            self.line()
+            print("Vous avez choisi le logiciel : '{}'".format(SoftwareName))
 
-        for item, detail in SoftwareDetails.items():
-            if item == "Catégorie":
-                detail = self.SoftwareCategories[detail - 1]
-            print("{:.12}\t: {}".format(item + " . . . . ", detail))
+            for item, detail in SoftwareDetails.items():
+                if item == "Catégorie":
+                    detail = self.SoftwareCategories[detail - 1]
+                print("{:.12}\t: {}".format(item + " . . . . ", detail))
+        else:
+            print("Vous n'avez aucun produit en catalogue")
+            SoftwareName = None
     
         return SoftwareName
 
@@ -213,20 +223,28 @@ class Simul:
         print("Cela vous coutera {} €.".format(PP))
         if PP > self.SD:
             print("Est-ce bien raisonnable ?")
-        REP = ""
-        while(REP != "O" and REP != "N"):
-            REP = input("Lancez-vous cette production (O/N) ==> ")
+        REP = self.input_choice("Lancez-vous cette production", "O", "N")
         if REP == "O":
             self.AR[SoftwareName]["Stock"] += QP
             self.SD = self.SD - PP
             self.NA += 1
 
-    def publicité(self):
+    def publicité(self, SoftwareName):
         # 390 ??
-        self.title("Publicité")
-        pass
+        if SoftwareName != None:
+            self.title("Publicité")
+            Qualité = self.AR[SoftwareName]["Qualité"]
+            MD = self.menu(self.IU, "Quel support choisissez-vous ?")
+            PUB = (MD * 1000 ) + (Qualité * 10) + int(random() * 1000)
+            self.line()
+            print("Cela vous coutera {} €.".format(PUB))
+            REP = self.input_choice("Voulez-vous continuer ?", "O", "N")
+            if REP == "O":
+                self.AR[SoftwareName]["Publicité"] += PUB
+                self.SD -= PUB
+                self.NA += 1
 
-    def ventes(self):
+    def ventes(self, SoftwareName):
         # 960
         self.title("Ventes")
         pass
