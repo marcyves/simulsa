@@ -144,12 +144,18 @@ class Simul:
 
         self.title("Une nouvelle journée commence...")
 
-    def balance(self):  # 2160
+    def balance(self):  # 2160 RESULTATS
         self.title("Vos comptes au {}".format(datetime.strftime(self.today, '%A %d %B %Y')))
         print("Vous avez dépensé {}€, il vous reste {}€ en trésorerie".format(self.TVV - self.SD, self.SD))
         self.TVV = self.SD
         print("Voici le tableau des ventes en euros :")
-        pass      
+        AvailableSalesPoints = []
+        for item, value in self.TN.items():
+            if value[1] == 1:
+                AvailableSalesPoints.append(item)
+        if len(AvailableSalesPoints) > 0:
+            for SalesPoint in AvailableSalesPoints:
+                print("{} : ".format(SalesPoint))
 
     def fabrication(self): # 20
         self.title("Fabrication")
@@ -203,7 +209,7 @@ class Simul:
                     detail = self.SoftwareCategories[detail - 1]
                 print("{:.12}\t: {}".format(item + " . . . . ", detail))
         else:
-            self.titre("Vous n'avez aucun produit en catalogue")
+            self.title("Vous n'avez aucun produit en catalogue")
             SoftwareName = False
     
         return SoftwareName
@@ -249,7 +255,7 @@ class Simul:
 
             SalesPointName = AvailableSalesPoints[PN-1]
         else:
-            self.titre("Il n'y a pas de point de vente qui corresponde à votre demande")
+            self.title("Il n'y a pas de point de vente qui corresponde à votre demande")
             SalesPointName = False
 
         return SalesPointName
@@ -265,7 +271,7 @@ class Simul:
                 CPV = (self.TN[SalesPointName][0] * 1000) + ( self.TN[SalesPointName][2] * 2.5) + int(random() *20)
                 print("Cela vous coutera {} €.".format(CPV))
                 if CPV > self.SD:
-                    self.titre("Vous n'avez pas les moyens de financer cette opération")
+                    self.title("Vous n'avez pas les moyens de financer cette opération")
                 else:
                     REP = self.get_choice("Voulez-vous continuer ?", "O", "N")
                     if REP == "O":
