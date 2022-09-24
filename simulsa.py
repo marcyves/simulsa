@@ -7,7 +7,7 @@ game = S.Simul()
 while True:
     game.announce()     # 1900
     choice = 0
-    NA = 1
+    game.NA = 1
     while choice < 5:
         choice = game.menu(game.GameOptions, "Votre choix")         # 1540
         if choice == 1:
