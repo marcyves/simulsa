@@ -4,12 +4,10 @@ game = S.Simul()
 
 # 2600 Boucle principale
 
-game.next_day(1)    #  910
-game.announce()     # 1900
-NA = 1
-
 choice = 0
 while True:
+    game.announce()     # 1900
+    NA = 1
     while choice < 5:
         choice = game.menu(game.GameOptions, "Votre choix")         # 1540
         if choice == 1:
