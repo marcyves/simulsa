@@ -32,10 +32,10 @@ class Simul:
         return answer
 
     @staticmethod
-    def input_choice(message, choix1, choix2):
+    def get_choice(message, choix1, choix2):
         answer = ""
         while(answer != choix1 and answer != choix2):
-            answer = input("{} ({}/{}) ==> ".format(message, choix1, choix2))
+            answer = input("{} ({}/{}) ==> ".format(message, choix1, choix2)).upper()
         return answer
 
     @staticmethod
@@ -72,23 +72,23 @@ class Simul:
 
         # TN
         # Points de vente
-        self.TN = [
-            ["Micropoint", 5,0, 78],
-            ["Computer", 2,0, 29],
-            ["Chip's", 4, 0, 15],
-            ["SoftShop", 3,0, 98],
-            ["Point-Data", 1,0, 6],
-            ["List/Plus", 1, 0, 71],
-            ["Microwave", 2, 0, 49],
-            ["Puce-Center", 3,0, 31],
-            ["Microhouse", 4, 0, 18],
-            ["PuceGalery", 5, 0, 10],
-            ["Ordiland", 4, 0, 97],
-            ["Orditheque", 3, 0, 7],
-            ["Soft-Hall", 2, 0, 13],
-            ["Phone-Home", 5, 0, 52],
-            ["Hard & Soft", 1, 0, 69]
-        ]
+        self.TN ={
+            "Micropoint":[5,0, 78.0],
+            "Computer":[2,0, 29.0],
+            "Chip's":[4, 0, 15.0],
+            "SoftShop":[3,0, 98.0],
+            "Point-Data":[1,0, 6.0],
+            "List/Plus":[1, 0, 71.0],
+            "Microwave":[2, 0, 49.0],
+            "Puce-Center":[3,0, 31.0],
+            "Microhouse":[4, 0, 18.0],
+            "PuceGalery":[5, 0, 10.0],
+            "Ordiland":[4, 0, 97.0],
+            "Orditheque":[3, 0, 7.0],
+            "Soft-Hall":[2, 0, 13.0],
+            "Phone-Home":[5, 0, 52.0],
+            "Hard & Soft":[1, 0, 69.0]
+        }
 
         # IU
         # Noms des médias
@@ -117,28 +117,25 @@ class Simul:
         self.AR = {}
         self.TVV = self.SD
 
-
     def next_day(self, JA):
         # Ligne 910 Date
         self.today = self.today.replace(day=self.today.day + JA)
     
-    def announce(self):
-        # Ligne 1900 Faits du jour
-                
+    def announce(self): # Ligne 1900 Faits du jour              
         self.title("Nous sommes {}".format(datetime.strftime(self.today, '%A %d %B %Y')))
 
         SoftwareType = int(random() * 7)
         SoftwareQuality = int(random() * 5)
         self.SalesProbability[SoftwareType][SoftwareQuality] = self.SalesProbability[SoftwareType][SoftwareQuality] + int(random() * 10)
-        print("En ouvrant votre journal, vous apprenez que les logiciels de catégorie {} et de qualité {} se vendent mieux !".format(SoftwareType, SoftwareQuality))
+        print("\nEn ouvrant votre journal, vous apprenez que les logiciels de catégorie {} et de qualité {} se vendent mieux !".format(self.SoftwareCategories[SoftwareType], SoftwareQuality))
         
         SoftwareType = int(random() * 7)
         SoftwareQuality = int(random() * 5)
         self.SalesProbability[SoftwareType][SoftwareQuality] = self.SalesProbability[SoftwareType][SoftwareQuality] - int(random() * 10)
-        print("Les logiciels de catégorie {} et de qualité {} se vendent moins !".format(SoftwareType, SoftwareQuality))
+        print("\nLes logiciels de catégorie {} et de qualité {} se vendent moins !".format(self.SoftwareCategories[SoftwareType], SoftwareQuality))
         
         ME = int(random() * 6)
-        print("Le temps est {}".format(self.meteo[ME]))
+        print("\nLe temps est {}".format(self.meteo[ME]))
 
         if ME > 3:
             ME = ME - 7
@@ -146,15 +143,16 @@ class Simul:
             for Y in range(5):
                 self.SalesProbability[X][Y] = self.SalesProbability[X][Y] + ME * 2
 
-        print("Une nouvelle journée commence...")
+        self.title("Une nouvelle journée commence...")
 
-    def balance(self):
-        # 2160
+    def balance(self):  # 2160
         self.title("Vos comptes au {}".format(datetime.strftime(self.today, '%A %d %B %Y')))
+        print("Vous avez dépensé {}€, il vous reste {}€ en trésorerie".format(self.TVV - self.SD, self.SD))
+        self.TVV = self.SD
+        print("Voici le tableau des ventes en euros :")
         pass      
 
-    def fabrication(self):
-        # 20
+    def fabrication(self): # 20
         self.title("Fabrication")
         if self.FA > 49:
             print("Vous avez suffisamment d'articles")
@@ -167,7 +165,7 @@ class Simul:
 
             ST = self.menu(self.SoftwareCategories, "Dans quelle catégorie le classer")
 
-            F = self.input_choice("Sera-t'il sur disquette ou cassette", "D", "C")
+            F = self.get_choice("Sera-t'il sur disquette ou cassette", "D", "C")
             FR = 2 if F == "D" else 1
 
             FB = (Q * 10) + (ST * 2) + (FR * 20) + int(random() * 10)
@@ -191,8 +189,7 @@ class Simul:
                                     }
             self.NA += 1
 
-    def préparation(self):
-        # 390
+    def préparation(self): # 390
         if any(self.AR.values()):
             index = self.menu(self.AR.keys(), "Quel logiciel à traiter ?") - 1
             key_list = list(self.AR)
@@ -207,13 +204,12 @@ class Simul:
                     detail = self.SoftwareCategories[detail - 1]
                 print("{:.12}\t: {}".format(item + " . . . . ", detail))
         else:
-            print("Vous n'avez aucun produit en catalogue")
-            SoftwareName = None
+            self.titre("Vous n'avez aucun produit en catalogue")
+            SoftwareName = False
     
         return SoftwareName
 
-    def production(self, SoftwareName):
-        # 390
+    def production(self, SoftwareName): # 390
         self.title("Production")
 
         QP = self.get_int("Combien voulez-vous produire d'articles ?")
@@ -223,14 +219,13 @@ class Simul:
         print("Cela vous coutera {} €.".format(PP))
         if PP > self.SD:
             print("Est-ce bien raisonnable ?")
-        REP = self.input_choice("Lancez-vous cette production", "O", "N")
+        REP = self.get_choice("Lancez-vous cette production", "O", "N")
         if REP == "O":
             self.AR[SoftwareName]["Stock"] += QP
             self.SD = self.SD - PP
             self.NA += 1
 
-    def publicité(self, SoftwareName):
-        # 390 ??
+    def publicité(self, SoftwareName): # 390
         if SoftwareName != None:
             self.title("Publicité")
             Qualité = self.AR[SoftwareName]["Qualité"]
@@ -238,16 +233,50 @@ class Simul:
             PUB = (MD * 1000 ) + (Qualité * 10) + int(random() * 1000)
             self.line()
             print("Cela vous coutera {} €.".format(PUB))
-            REP = self.input_choice("Voulez-vous continuer ?", "O", "N")
+            REP = self.get_choice("Voulez-vous continuer ?", "O", "N")
             if REP == "O":
                 self.AR[SoftwareName]["Publicité"] += PUB
                 self.SD -= PUB
                 self.NA += 1
 
-    def ventes(self, SoftwareName):
-        # 960
+    def SalesPointMenu(self, status):
+        # Création point de vente
+        AvailableSalesPoints = []
+        for item, value in self.TN.items():
+            if value[1] == status:
+                AvailableSalesPoints.append(item)
+        if len(AvailableSalesPoints) > 0:
+            PN = self.menu(AvailableSalesPoints, "Quel point de vente choisissez-vous ?")
+
+            SalesPointName = AvailableSalesPoints[PN-1]
+        else:
+            self.titre("Il n'y a pas de point de vente qui corresponde à votre demande")
+            SalesPointName = False
+
+        return SalesPointName
+
+    def ventes(self, SoftwareName): # 960 
         self.title("Ventes")
-        pass
+        REP = self.get_choice("Voulez-vous occuper un nouveau point de ventes ?", "O", "N")
+        if REP == "O":
+            # Création point de vente
+            SalesPointName = self.SalesPointMenu(0)
+
+            if SalesPointName:
+                CPV = (self.TN[SalesPointName][0] * 1000) + ( self.TN[SalesPointName][2] * 2.5) + int(random() *20)
+                print("Cela vous coutera {} €.".format(CPV))
+                if CPV > self.SD:
+                    self.titre("Vous n'avez pas les moyens de financer cette opération")
+                else:
+                    REP = self.get_choice("Voulez-vous continuer ?", "O", "N")
+                    if REP == "O":
+                        self.TN[SalesPointName][1] = 1
+                        self.SD -= CPV
+        else: # 1200
+            # Sélection point de vente
+            SalesPointName = self.SalesPointMenu(1)
+            if SalesPointName:
+                pass
 
 
 game = Simul()
@@ -264,14 +293,15 @@ while True:
         choice = game.menu(game.GameOptions, "Votre choix")         # 1540
         if choice == 1:
             game.fabrication()
-        else:
-            SoftwareName = game.préparation()            
-            if choice == 2:
-                game.production(SoftwareName)
-            elif choice == 3: 
-                game.publicité(SoftwareName)
-            elif choice == 4:
-                game.ventes(SoftwareName)
+        elif choice < 5:
+            SoftwareName = game.préparation()
+            if SoftwareName:            
+                if choice == 2:
+                    game.production(SoftwareName)
+                elif choice == 3: 
+                    game.publicité(SoftwareName)
+                elif choice == 4:
+                    game.ventes(SoftwareName)
 
     game.balance()      # 2160
 
