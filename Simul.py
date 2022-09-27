@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from nntplib import ArticleInfo
+
 from random import random
 
 class Simul:
@@ -70,21 +70,21 @@ class Simul:
         # TN
         # Points de vente
         self.SalesPoints ={
-            "Micropoint":[5,0, 78.0],
-            "Computer":[2,0, 29.0],
-            "Chip's":[4, 0, 15.0],
-            "SoftShop":[3,0, 98.0],
-            "Point-Data":[1,0, 6.0],
-            "List/Plus":[1, 0, 71.0],
-            "Microwave":[2, 0, 49.0],
-            "Puce-Center":[3,0, 31.0],
-            "Microhouse":[4, 0, 18.0],
-            "PuceGalery":[5, 0, 10.0],
-            "Ordiland":[4, 0, 97.0],
-            "Orditheque":[3, 0, 7.0],
-            "Soft-Hall":[2, 0, 13.0],
-            "Phone-Home":[5, 0, 52.0],
-            "Hard & Soft":[1, 0, 69.0]
+            "Micropoint":{"Qualité":5,"Actif":0, "Distance":78.0, "Articles":[]},
+            "Computer":{"Qualité":2, "Actif":0, "Distance":29.0, "Articles":[]},
+            "Chip's":{"Qualité":4, "Actif":0, "Distance":15.0, "Articles":[]},
+            "SoftShop":{"Qualité":3, "Actif":0, "Distance":98.0, "Articles":[]},
+            "Point-Data":{"Qualité":1, "Actif":0, "Distance":6.0, "Articles":[]},
+            "List/Plus":{"Qualité":1, "Actif":0, "Distance":71.0, "Articles":[]},
+            "Microwave":{"Qualité":2, "Actif":0, "Distance":49.0, "Articles":[]},
+            "Puce-Center":{"Qualité":3, "Actif":0, "Distance":31.0, "Articles":[]},
+            "Microhouse":{"Qualité":4, "Actif":0, "Distance":18.0, "Articles":[]},
+            "PuceGalery":{"Qualité":5, "Actif":0, "Distance":10.0, "Articles":[]},
+            "Ordiland":{"Qualité":4, "Actif":0, "Distance":97.0, "Articles":[]},
+            "Orditheque":{"Qualité":3, "Actif":0, "Distance":7.0, "Articles":[]},
+            "Soft-Hall":{"Qualité":2, "Actif":0, "Distance":13.0, "Articles":[]},
+            "Phone-Home":{"Qualité":5, "Actif":0, "Distance":52.0, "Articles":[]},
+            "Hard & Soft":{"Qualité":1, "Actif":0, "Distance":69.0, "Articles":[]}
         }
 
         # IU
@@ -111,8 +111,7 @@ class Simul:
         self.trésorerie = 5000              # SD Caisse du joueur
         self.ArticlesProduced = 0           # FA Nombre d'articles créés
         self.ActionsToday = 0               # NA Nombre d'actions par jour
-        self.AR = {}
-        self.TS = []
+        self.AR = {}                        # TS est contenu dans AR sous l'indice "Stock"
         self.trésoreriePrécédente = self.trésorerie # TTV
 
     def next_day(self, JA):
@@ -150,33 +149,35 @@ class Simul:
         print("Voici le tableau des ventes en euros :")
         AvailableSalesPoints = []
         for item, value in self.SalesPoints.items():
-            if value[1] == 1:
+            if value["Actif"] == 1:
                 AvailableSalesPoints.append(item)
         if len(AvailableSalesPoints) > 0:
             for SalesPoint in AvailableSalesPoints:
-                print("{} : ".format(SalesPoint))
-                for i in range(5):
-                    if self.TS[SalesPoint][i] != 0:
-                        ArticleName = self.TS[SalesPoint][i]
-                        print(ArticleName)
-                        PX = self.AR[ArticleName]["Prix"]
+                print("\t== Point de vente : {} ".format(SalesPoint))
+
+                if self.SalesPoints[SalesPoint]["Actif"] != 0:
+                    for ArticleName in self.SalesPoints[SalesPoint]["Articles"]:
+                        print("\t  - Article : {}".format(ArticleName))
+#                        print(self.SalesPoints)
+
+                        Price = self.AR[ArticleName]["Prix"]
                         Q  = self.AR[ArticleName]["Qualité"]
                         ST = self.AR[ArticleName]["Catégorie"]
                         FR = self.AR[ArticleName]["Support"]
 
-                        VJ = self.SalesPoints[1] * 2 +int(random() * 5) + self.SalesPoints[3] / 20 + slef.STK[ArticleName][2] * 10
+                        TodaySales = self.SalesPoints[SalesPoint]["Qualité"] * 2 +int(random() * 5) + self.SalesPoints[SalesPoint]["Distance"] / 20 + self.AR[ArticleName]["Stock"] * 10
                         PC = Q * 10 + FR * 20 + 10
                         WA = self.SalesProbability[ST][Q]
-                        if PX > PC * 2:
+                        if Price > PC * 2:
                             WA = WA / 2
                         if WA > 100:
                             WA = 100
-                        VJ = int((VJ * WA)/100)
-                        if VJ > self.TS[SalesPoint][i][1]:
-                            VJ = self.TS[SalesPoint][i][1]
+                        TodaySales = int((TodaySales * WA)/100)
+                        if TodaySales > self.SalesPoints[SalesPoint][ArticleName]["Stock"]:
+                            TodaySales = self.SalesPoints[SalesPoint][ArticleName]["Stock"]
                         
-                        VJ = int(VJ * PX)
-                        self.trésoreriePrécédente += VJ
+                        TodaySales = int(TodaySales * Price)
+                        self.trésoreriePrécédente += TodaySales
                         print(self.AR[ArticleName])
 
         self.trésoreriePrécédente = self.trésoreriePrécédente * 0.9
@@ -198,27 +199,30 @@ class Simul:
             SoftwareCategory = self.menu(self.SoftwareCategories, "Dans quelle catégorie le classer")
 
             F = self.get_choice("Sera-t'il sur disquette ou cassette", "D", "C")
-            FR = 2 if F == "D" else 1
 
-            ProductionCost = (Quality * 10) + (SoftwareCategory * 2) + (FR * 20) + int(random() * 10)
-
+            ProductionCost = self.AddArticle(SoftwareName, Author, Quality, SoftwareCategory, F, SalesPrice)
             print("Vous devrez payer {} € pour ajouter {} à votre catalogue".format(ProductionCost, SoftwareName))
 
             SalesPrice = self.get_int("Combien le vendrez-vous ?")
-
             self.trésorerie = self.trésorerie - ProductionCost
-            self.ArticlesProduced += 1
-            self.AR[SoftwareName] = {
-                                      "Auteur":Author,
-                                      "Qualité":Quality,
-                                      "Catégorie":SoftwareCategory,
-                                      "Support":FR,
-                                      "Prix":SalesPrice,
-                                      "Stock":0,
-                                      "Ventes":0,
-                                      "Publicité":0
-                                    }
-            self.ActionsToday += 1
+
+    def AddArticle(self, SoftwareName, Author, Quality, SoftwareCategory, F, SalesPrice):
+        FR = 2 if F == "D" else 1
+        ProductionCost = (Quality * 10) + (SoftwareCategory * 2) + (FR * 20) + int(random() * 10)
+        self.ArticlesProduced += 1
+        self.AR[SoftwareName] = {
+                                    "Auteur":Author,
+                                    "Qualité":Quality,
+                                    "Catégorie":SoftwareCategory,
+                                    "Support":FR,
+                                    "Prix":SalesPrice,
+                                    "Stock":0,
+                                    "Ventes":0,
+                                    "Publicité":0
+                                }
+        self.ActionsToday += 1
+
+        return ProductionCost
 
     def préparation(self): # 390
         if any(self.AR.values()):
@@ -274,7 +278,7 @@ class Simul:
         # Création point de vente
         AvailableSalesPoints = []
         for item, value in self.SalesPoints.items():
-            if value[1] == status:
+            if value["Actif"] == status:
                 AvailableSalesPoints.append(item)
         if len(AvailableSalesPoints) > 0:
             PN = self.menu(AvailableSalesPoints, "Quel point de vente choisissez-vous ?")
@@ -286,25 +290,27 @@ class Simul:
 
         return SalesPointName
 
+    def AddArticleToSalesPoint(self, SalesPointName, SoftwareName):
+        CPV = (self.SalesPoints[SalesPointName]["Qualité"] * 1000) + ( self.SalesPoints[SalesPointName]["Distance"] * 2.5) + int(random() *20)
+        print("Cela vous coutera {} €.".format(CPV))
+        if CPV > self.trésorerie:
+            self.title("Vous n'avez pas les moyens de financer cette opération")
+        else:
+            REP = self.get_choice("Voulez-vous continuer ?", "O", "N")
+            if REP == "O":
+                self.SalesPoints[SalesPointName]["Actif"] = 1
+                self.trésorerie -= CPV
+                self.SalesPoints[SalesPointName]["Articles"].append(SoftwareName)
+
     def ventes(self, SoftwareName): # 960 
         self.title("Ventes")
         REP = self.get_choice("Voulez-vous occuper un nouveau point de ventes ?", "O", "N")
         if REP == "O":
             # Création point de vente
-            SalesPointName = self.SalesPointMenu(0)
+            R = 0
+        else:
+            R = 1
+        SalesPointName = self.SalesPointMenu(R)
+        if SalesPointName:
+            self.AddArticleToSalesPoint(SalesPointName, SoftwareName)
 
-            if SalesPointName:
-                CPV = (self.SalesPoints[SalesPointName][0] * 1000) + ( self.SalesPoints[SalesPointName][2] * 2.5) + int(random() *20)
-                print("Cela vous coutera {} €.".format(CPV))
-                if CPV > self.trésorerie:
-                    self.title("Vous n'avez pas les moyens de financer cette opération")
-                else:
-                    REP = self.get_choice("Voulez-vous continuer ?", "O", "N")
-                    if REP == "O":
-                        self.SalesPoints[SalesPointName][1] = 1
-                        self.trésorerie -= CPV
-        else: # 1200
-            # Sélection point de vente
-            SalesPointName = self.SalesPointMenu(1)
-            if SalesPointName:
-                pass
