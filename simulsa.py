@@ -4,7 +4,7 @@ game = S.Simul()
 
 # 2600 Boucle principale
 
-game = True
+gameOn = True
 while game:
     game.announce()     # 1900
     choice = 0
@@ -27,12 +27,12 @@ while game:
     # Vérification fin de jeu
     if game.trésorerie < 100:
         print("C'est une faillite")
-        game = False
+        gameOn = False
     elif game.ArticlesProduced > 49 and game.trésorerie > 1000000:
         print("Vous êtes maitre du marché, c'est gagné")
-        game = False
+        gameOn = False
     elif choice == 6:
-        game = False
+        gameOn = False
     else:
         game.next_day(1)
 
