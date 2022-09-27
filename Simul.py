@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from nntplib import ArticleInfo
 from random import random
 
 class Simul:
@@ -107,11 +108,12 @@ class Simul:
 
         self.today = date.today()
 
-        self.trésorerie = 5000              # Caisse du joueur
-        self.ArticlesProduced = 0                 # Nombre d'articles créés
-        self.ActionsToday = 0                 # Nombre d'actions par jour
+        self.trésorerie = 5000              # SD Caisse du joueur
+        self.ArticlesProduced = 0           # FA Nombre d'articles créés
+        self.ActionsToday = 0               # NA Nombre d'actions par jour
         self.AR = {}
-        self.trésoreriePrécédente = self.trésorerie
+        self.TS = []
+        self.trésoreriePrécédente = self.trésorerie # TTV
 
     def next_day(self, JA):
         # Ligne 910 Date
@@ -153,6 +155,34 @@ class Simul:
         if len(AvailableSalesPoints) > 0:
             for SalesPoint in AvailableSalesPoints:
                 print("{} : ".format(SalesPoint))
+                for i in range(5):
+                    if self.TS[SalesPoint][i] != 0:
+                        ArticleName = self.TS[SalesPoint][i]
+                        print(ArticleName)
+                        PX = self.AR[ArticleName]["Prix"]
+                        Q  = self.AR[ArticleName]["Qualité"]
+                        ST = self.AR[ArticleName]["Catégorie"]
+                        FR = self.AR[ArticleName]["Support"]
+
+                        VJ = self.SalesPoints[1] * 2 +int(random() * 5) + self.SalesPoints[3] / 20 + slef.STK[ArticleName][2] * 10
+                        PC = Q * 10 + FR * 20 + 10
+                        WA = self.SalesProbability[ST][Q]
+                        if PX > PC * 2:
+                            WA = WA / 2
+                        if WA > 100:
+                            WA = 100
+                        VJ = int((VJ * WA)/100)
+                        if VJ > self.TS[SalesPoint][i][1]:
+                            VJ = self.TS[SalesPoint][i][1]
+                        
+                        VJ = int(VJ * PX)
+                        self.trésoreriePrécédente += VJ
+                        print(self.AR[ArticleName])
+
+        self.trésoreriePrécédente = self.trésoreriePrécédente * 0.9
+        print("Au total vous avez gagné {}€".format(self.trésoreriePrécédente))
+        self.trésorerie += self.trésoreriePrécédente
+        print("Vous avez {}€ en caisse.".format(self.trésorerie))
 
     def fabrication(self): # 20
         self.title("Fabrication")
