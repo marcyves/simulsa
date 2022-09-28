@@ -6,14 +6,14 @@ class Simul:
 
     @staticmethod
     def line(length=50):
-        print("-"*length)
+        print("+" + "-"*(length+4) + "+")
 
     @staticmethod
     def title(message):
         print("\n")
-        Simul.line()
-        print("\t", message)
-        Simul.line()
+        Simul.line(len(message))
+        print("| ", message, " |")
+        Simul.line(len(message))
 
     @staticmethod
     def menu(items, message):
