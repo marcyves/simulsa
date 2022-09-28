@@ -153,12 +153,11 @@ class Simul:
                 AvailableSalesPoints.append(item)
         if len(AvailableSalesPoints) > 0:
             for SalesPoint in AvailableSalesPoints:
-                print("\t== Point de vente : {} ".format(SalesPoint))
+                print("\t== Point de vente : {}".format(SalesPoint))
 
                 if self.SalesPoints[SalesPoint]["Actif"] != 0:
                     for ArticleName in self.SalesPoints[SalesPoint]["Articles"]:
-                        print("\t  - Article : {}".format(ArticleName))
-#                        print(self.SalesPoints)
+                        print("\n\t  - Article : {}".format(ArticleName))
 
                         Price = self.AR[ArticleName]["Prix"]
                         Q  = self.AR[ArticleName]["Qualité"]
@@ -173,8 +172,8 @@ class Simul:
                         if WA > 100:
                             WA = 100
                         TodaySales = int((TodaySales * WA)/100)
-                        if TodaySales > self.SalesPoints[SalesPoint][ArticleName]["Stock"]:
-                            TodaySales = self.SalesPoints[SalesPoint][ArticleName]["Stock"]
+                        if TodaySales > self.AR[ArticleName]["Stock"]:
+                            TodaySales = self.AR[ArticleName]["Stock"]
                         
                         TodaySales = int(TodaySales * Price)
                         self.trésoreriePrécédente += TodaySales
@@ -200,15 +199,17 @@ class Simul:
 
             F = self.get_choice("Sera-t'il sur disquette ou cassette", "D", "C")
 
-            ProductionCost = self.AddArticle(SoftwareName, Author, Quality, SoftwareCategory, F, SalesPrice)
+            FR = 2 if F == "D" else 1
+            ProductionCost = (Quality * 10) + (SoftwareCategory * 2) + (FR * 20) + int(random() * 10)
+
             print("Vous devrez payer {} € pour ajouter {} à votre catalogue".format(ProductionCost, SoftwareName))
 
             SalesPrice = self.get_int("Combien le vendrez-vous ?")
             self.trésorerie = self.trésorerie - ProductionCost
 
-    def AddArticle(self, SoftwareName, Author, Quality, SoftwareCategory, F, SalesPrice):
-        FR = 2 if F == "D" else 1
-        ProductionCost = (Quality * 10) + (SoftwareCategory * 2) + (FR * 20) + int(random() * 10)
+            self.AddArticle(SoftwareName, Author, Quality, SoftwareCategory, FR, SalesPrice)
+
+    def AddArticle(self, SoftwareName, Author, Quality, SoftwareCategory, FR, SalesPrice):
         self.ArticlesProduced += 1
         self.AR[SoftwareName] = {
                                     "Auteur":Author,
@@ -221,8 +222,6 @@ class Simul:
                                     "Publicité":0
                                 }
         self.ActionsToday += 1
-
-        return ProductionCost
 
     def préparation(self): # 390
         if any(self.AR.values()):
@@ -247,17 +246,17 @@ class Simul:
     def production(self, SoftwareName): # 390
         self.title("Production")
 
-        QP = self.get_int("Combien voulez-vous produire d'articles ?")
+        QuantityToProduce = self.get_int("Combien voulez-vous produire d'articles ?")
         Qualité = self.AR[SoftwareName]["Qualité"]
         Support = self.AR[SoftwareName]["Support"]
-        PP = (QP * Qualité + (Support * 3.5)) + int(random() * QP)
-        print("Cela vous coutera {} €.".format(PP))
-        if PP > self.trésorerie:
+        ProductionPrice = int(QuantityToProduce * Qualité) + int(Support * 4) + int(random() * QuantityToProduce)
+        print("Cela vous coutera {} €.".format(ProductionPrice))
+        if ProductionPrice > self.trésorerie:
             print("Est-ce bien raisonnable ?")
         REP = self.get_choice("Lancez-vous cette production", "O", "N")
         if REP == "O":
-            self.AR[SoftwareName]["Stock"] += QP
-            self.trésorerie = self.trésorerie - PP
+            self.AR[SoftwareName]["Stock"] += QuantityToProduce
+            self.trésorerie = self.trésorerie - ProductionPrice
             self.ActionsToday += 1
 
     def publicité(self, SoftwareName): # 390
