@@ -4,10 +4,10 @@ game = S.Simul()
 
 # Test Data
 
-game.AddArticle("Windows", "Bill Gates", 1, 1, "D", 100)
-game.AddArticle("Word", "Bill Gates", 2, 2, "D", 150)
-game.AddArticle("Excel", "Bill Gates", 3, 3, "D", 200)
-game.AddArticle("Powerpoint", "Bill Gates", 4, 4, "D", 300)
+game.AddArticle("Windows", "Bill Gates", 1, 1, 1, 100)
+game.AddArticle("Word", "Bill Gates", 2, 2, 1, 150)
+game.AddArticle("Excel", "Bill Gates", 3, 3, 2, 200)
+game.AddArticle("Powerpoint", "Bill Gates", 4, 4, 2, 300)
 
 # 2600 Boucle principale
 
