@@ -58,12 +58,12 @@ class Simul:
         return name
 
     def __init__(self):
-        self.title("SIMUL SA")
+        self.title("     SIMUL SA     ")
         print("Créer des programmes, asssurer leur duplication et leur conditionnement, organiser leurs points de vente et leur distribution, et les soutenir avec une campagne publicitaire, voilà les tâches élémentaires d'une société de logiciels.")
         print("Vous êtes son P.D.G : sachez doser chaque action, évaluer chaque investissement, prendre des risques quand il le faut...")
         print("Méfiance, la faillite vous guette !")
 
-        self.GameOptions = ["Fabrication", "Production", "Publicité", "Ventes", "Fin de la journée", "Fin du jeu"]
+        self.GameOptions = ["Fabrication", "Production", "Publicité", "Ventes", "Tableau de Bord", "Fin de la journée", "Fin du jeu"]
         self.SoftwareCategories = ["Education", "Gestion", "Professionnel", "Personnel", "Utilitaire", "Artistique", "Jeux"]
 
         # Ligne 1700

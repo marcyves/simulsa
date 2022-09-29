@@ -17,17 +17,19 @@ while gameOn:
     choice = 0
     game.NA = 1
     while choice < 5:
-        choice = game.menu(game.GameOptions, "Votre choix")         # 1540
-        if choice == 1:
+        choice = game.menu(game.GameOptions, "Votre choix") - 1        # 1540
+        if choice == game.GameOptions.index("Fabrication"):
             game.fabrication()
-        elif choice < 5:
+        elif choice == game.GameOptions.index("Tableau de Bord"):
+            game.balance()
+        elif choice < game.GameOptions.index("Fin de la journée"):
             SoftwareName = game.préparation()
             if SoftwareName:            
-                if choice == 2:
+                if choice == game.GameOptions.index("Production"):
                     game.production(SoftwareName)
-                elif choice == 3: 
+                elif choice == game.GameOptions.index("Publicité"): 
                     game.publicité(SoftwareName)
-                elif choice == 4:
+                elif choice == game.GameOptions.index("Ventes"):
                     game.ventes(SoftwareName)
 
     game.balance()      # 2160
@@ -38,7 +40,7 @@ while gameOn:
     elif game.ArticlesProduced > 49 and game.trésorerie > 1000000:
         print("Vous êtes maitre du marché, c'est gagné")
         gameOn = False
-    elif choice == 6:
+    elif choice == game.GameOptions.index("Fin du jeu"):
         gameOn = False
     else:
         game.next_day(1)
