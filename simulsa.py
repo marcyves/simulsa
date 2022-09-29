@@ -17,6 +17,7 @@ while gameOn:
     choice = 0
     game.NA = 1
     while choice < game.GameOptions.index("Fin de la journée"):
+        game.title("Menu principal")
         choice = game.menu(game.GameOptions, "Votre choix") - 1        # 1540
         if choice == game.GameOptions.index("Fabrication"):
             game.fabrication()
