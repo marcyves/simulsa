@@ -230,13 +230,20 @@ class Simul:
             SoftwareName = key_list[index]
             SoftwareDetails = self.AR[SoftwareName]
 
-            self.line()
-            print("Vous avez choisi le logiciel : '{}'".format(SoftwareName))
+            self.title("Vous avez choisi le logiciel : '{}'".format(SoftwareName))
 
             for item, detail in SoftwareDetails.items():
                 if item == "Catégorie":
                     detail = self.SoftwareCategories[detail - 1]
+                elif item == "Support":
+                    detail = "Disquette" if detail == 1 else "Cassette" 
+                elif item == "Stock":
+                    stock = detail
                 print("{:.12}\t: {}".format(item + " . . . . ", detail))
+
+            if stock <= 0:
+                self.title("Vous devez d'abord produire cet article pour le mettre en vente")
+                SoftwareName = False
         else:
             self.title("Vous n'avez aucun produit en catalogue")
             SoftwareName = False
